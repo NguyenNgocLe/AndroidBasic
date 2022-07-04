@@ -4,7 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../../layout/custom_preview.xml" value="0.2296195652173913" />
+        <entry key="app/src/main/res/drawable/correct_answer_border_bg.xml" value="0.118" />
         <entry key="app/src/main/res/drawable/default_option_border_bg.xml" value="0.1985" />
+        <entry key="app/src/main/res/drawable/select_draw_color.xml" value="0.118" />
+        <entry key="app/src/main/res/drawable/wrong_answer_border_bg.xml" value="0.118" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.23007246376811594" />
         <entry key="app/src/main/res/layout/activity_quiz_question.xml" value="0.10648148148148148" />
         <entry key="app/src/main/res/layout/activity_quiz_questions.xml" value="0.335" />
