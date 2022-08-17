@@ -21,27 +21,30 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
     }
 
     private fun initListeners() {
-        if(productDetails == null) {
+        if(productDetails == null || billingClient == null) {
             return
         }
-        // Retrieve a value for "productDetails" by calling queryProductDetailsAsync()
-        // Get the offerToken of the selected offer
-        val offerToken =
-            selectedOfferIndex?.let { productDetails?.subscriptionOfferDetails?.get(it)?.offerToken }
-        val productDetailsParamsList: List<BillingFlowParams.ProductDetailsParams> =
-            listOf(
-                BillingFlowParams.ProductDetailsParams.newBuilder()
-                    .setProductDetails(productDetails!!)
-                    .setOfferToken(offerToken!!)
+        purchase_button?.setOnClickListener {
+            // Retrieve a value for "productDetails" by calling queryProductDetailsAsync()
+            // Get the offerToken of the selected offer
+            val offerToken = selectedOfferIndex?.let { index ->
+                productDetails?.subscriptionOfferDetails?.get(index)?.offerToken
+            }
+            val productDetailsParamsList: List<BillingFlowParams.ProductDetailsParams> =
+                listOf(
+                    BillingFlowParams.ProductDetailsParams.newBuilder()
+                        .setProductDetails(productDetails!!)
+                        .setOfferToken(offerToken!!)
+                        .build()
+                )
+            val billingFlowParams =
+                BillingFlowParams.newBuilder()
+                    .setProductDetailsParamsList(productDetailsParamsList)
                     .build()
-            )
-        val billingFlowParams =
-            BillingFlowParams.newBuilder()
-                .setProductDetailsParamsList(productDetailsParamsList)
-                .build()
 
-        // Launch the billing flow
-        billingClient?.launchBillingFlow(this, billingFlowParams)
+            // Launch the billing flow
+            billingClient?.launchBillingFlow(this, billingFlowParams)
+        }
     }
 
     private fun setUpBillingClient() {
@@ -78,27 +81,26 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
                         QueryProductDetailsParams.Product.newBuilder()
                             .setProductId("premium_10_demo")
                             .setProductType(BillingClient.ProductType.SUBS)
-                            .build()))
+                            .build()
+                    )
+                )
                 .build()
 
-        billingClient?.queryProductDetailsAsync(queryProductDetailsParams) {
-                billingResult, productDetailsList ->
-            if(billingResult.responseCode == -1) {
-                startConnection()
-            }
+        billingClient?.queryProductDetailsAsync(queryProductDetailsParams) { billingResult, productDetailsList ->
             // Process the result
-            for (productDetails in productDetailsList) {
+            productDetailsList.forEachIndexed { index, productDetails ->
                 Log.v("TAG_INAPP", "skuDetailsList : $productDetailsList")
                 //This list should contain the products added above
-                updateUI(productDetails)
+                updateUI(productDetails, index)
             }
         }
 
     }
 
-    private fun updateUI(productDetails: ProductDetails?) {
+    private fun updateUI(productDetails: ProductDetails?, index: Int) {
         productDetails?.let {
             this.productDetails = it
+            this.selectedOfferIndex = index
             txt_product_name?.text = productDetails.title
             txt_product_description?.text = productDetails.description
             showUIElements()
@@ -118,7 +120,7 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {
                 for (purchase in purchases) {
 //                        handlePurchase(purchase)
-                   handleConsumedPurchases(purchase)
+                    handleConsumedPurchases(purchase)
                 }
             } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
                 // Handle an error caused by a user cancelling the purchase flow.
@@ -166,8 +168,7 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
     }
 
     override fun onPurchasesUpdated(p0: BillingResult, p1: MutableList<Purchase>?) {
-
+        print("vao ko??????????? $p0\n\n\n")
+        print("vao ko??????????? $p1")
     }
-
-
 }
