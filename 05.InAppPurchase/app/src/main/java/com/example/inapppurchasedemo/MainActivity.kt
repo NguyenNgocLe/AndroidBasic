@@ -8,7 +8,6 @@ import com.android.billingclient.api.*
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.collect.ImmutableList
 import kotlinx.android.synthetic.main.activity_main.*
 
-
 class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
     private var billingClient: BillingClient? = null
     private var productDetails: ProductDetails? = null
@@ -21,7 +20,7 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
     }
 
     private fun initListeners() {
-        if(productDetails == null || billingClient == null) {
+        if (productDetails == null) {
             return
         }
         purchase_button?.setOnClickListener {
@@ -150,7 +149,7 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
     }
 
     private fun handleNonConcumablePurchase(purchase: Purchase) {
-        Log.v("TAG_INAPP", "handlePurchase : ${purchase}")
+        Log.v("TAG_INAPP", "handlePurchase : $purchase")
         if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
             if (!purchase.isAcknowledged) {
                 val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
@@ -168,7 +167,7 @@ class MainActivity : AppCompatActivity(), PurchasesUpdatedListener {
     }
 
     override fun onPurchasesUpdated(p0: BillingResult, p1: MutableList<Purchase>?) {
-        print("vao ko??????????? $p0\n\n\n")
-        print("vao ko??????????? $p1")
+        print("BillingResult $p0\n")
+        print("MutableList $p1")
     }
 }
